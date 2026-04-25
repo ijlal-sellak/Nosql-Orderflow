@@ -5,7 +5,7 @@
 ![CouchDB](https://img.shields.io/badge/CouchDB-Document_DB-E42528?style=for-the-badge&logo=apache-couchdb&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-> A full-stack e-commerce order management system built with **CouchDB** (NoSQL Document database), **Python Flask**, and **Docker**. Features a complete CRUD interface with a modern dark-mode dashboard.
+> A full-stack e-commerce order management system built with **CouchDB** (NoSQL Document database), **Python Flask**, and **Docker**. Features a complete CRUD interface .
 
 ---
 
@@ -73,16 +73,7 @@ cd Nosql-Orderflow
 
 ### 2️⃣ Start CouchDB with Docker
 
-```bash
-docker run -d \
-  --name couchdb \
-  -e COUCHDB_USER=admin \
-  -e COUCHDB_PASSWORD=admin123 \
-  -p 5984:5984 \
-  couchdb:latest
-```
-
-Or use Docker Compose:
+use Docker Compose:
 
 ```bash
 docker-compose -f docker/docker-compose.yml up -d
@@ -183,19 +174,6 @@ CouchDB is a **Document-type NoSQL** database. It was chosen over the 3 other No
 
 ---
 
-## 🐳 Docker Details
-
-CouchDB runs in an isolated Docker container:
-
-```
-Port:     5984
-User:     admin
-Password: admin123
-Web UI:   http://localhost:5984/_utils
-Database: ecommerce
-```
-
----
 
 ## 📦 Dataset
 
@@ -219,6 +197,6 @@ Database: ecommerce
 
 ---
 
-## 📄 License
+##  License
 
 This project was built for academic purposes as part of a NoSQL Databases course.
