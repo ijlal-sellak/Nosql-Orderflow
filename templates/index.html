@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>E-Commerce Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --border: #2a2a3d;
+            --accent: #6c63ff;
+            --accent2: #ff6584;
+            --accent3: #43e97b;
+            --text: #e8e8f0;
+            --text-muted: #6b6b8a;
+            --delivered: #43e97b;
+            --shipped: #38b2f5;
+            --processing: #f6d365;
+            --canceled: #ff6584;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* BG GRID */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: 240px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 20px;
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 48px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span { font-weight: 400; opacity: 0.6; }
+
+        .nav-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            padding-left: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(108,99,255,0.12);
+            color: var(--accent);
+        }
+
+        .nav-item .icon { font-size: 18px; width: 22px; text-align: center; }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .db-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 10px 12px;
+        }
+
+        .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--delivered);
+            box-shadow: 0 0 8px var(--delivered);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            padding: 40px 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* HEADER */
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .page-title span {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .btn-add {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), #9b59b6);
+            color: white;
+            text-decoration: none;
+            padding: 13px 24px;
+            border-radius: 12px;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(108,99,255,0.35);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(108,99,255,0.5);
+        }
+
+        /* STATS CARDS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 36px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px 24px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+        }
+
+        .stat-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent), transparent); }
+        .stat-card:nth-child(2)::before { background: linear-gradient(90deg, var(--delivered), transparent); }
+        .stat-card:nth-child(3)::before { background: linear-gradient(90deg, var(--shipped), transparent); }
+        .stat-card:nth-child(4)::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+
+        .stat-card:hover { border-color: rgba(108,99,255,0.3); }
+
+        .stat-label {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -1px;
+        }
+
+        .stat-icon {
+            position: absolute;
+            top: 22px; right: 22px;
+            font-size: 22px;
+            opacity: 0.4;
+        }
+
+        /* SEARCH BAR */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .search-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px 12px 44px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input::placeholder { color: var(--text-muted); }
+        .search-input:focus { border-color: var(--accent); }
+
+        /* TABLE */
+        .table-wrap {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .table-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .table-count {
+            font-size: 12px;
+            color: var(--text-muted);
+            background: var(--surface2);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 500;
+            background: var(--surface2);
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(42,42,61,0.5);
+            transition: background 0.15s;
+        }
+
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: rgba(108,99,255,0.05); }
+
+        td {
+            padding: 16px 20px;
+            font-size: 13.5px;
+            color: var(--text);
+        }
+
+        .order-id {
+            font-family: 'DM Sans', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .customer-id {
+            font-size: 12px;
+            color: var(--text-muted);
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* STATUS BADGE */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px; height: 6px;
+            border-radius: 50%;
+        }
+
+        .badge-delivered  { background: rgba(67,233,123,0.1); color: var(--delivered); }
+        .badge-delivered::before  { background: var(--delivered); }
+        .badge-shipped    { background: rgba(56,178,245,0.1); color: var(--shipped); }
+        .badge-shipped::before    { background: var(--shipped); }
+        .badge-processing { background: rgba(246,211,101,0.1); color: var(--processing); }
+        .badge-processing::before { background: var(--processing); }
+        .badge-canceled   { background: rgba(255,101,132,0.1); color: var(--canceled); }
+        .badge-canceled::before   { background: var(--canceled); }
+        .badge-default    { background: rgba(107,107,138,0.1); color: var(--text-muted); }
+        .badge-default::before    { background: var(--text-muted); }
+
+        .price {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--accent3);
+        }
+
+        .price::before { content: 'R$ '; font-size: 11px; opacity: 0.7; }
+
+        /* ACTION BUTTONS */
+        .actions { display: flex; gap: 8px; }
+
+        .btn-edit, .btn-del {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-edit {
+            background: rgba(108,99,255,0.12);
+            color: var(--accent);
+            border: 1px solid rgba(108,99,255,0.2);
+        }
+
+        .btn-edit:hover {
+            background: rgba(108,99,255,0.25);
+            transform: translateY(-1px);
+        }
+
+        .btn-del {
+            background: rgba(255,101,132,0.1);
+            color: var(--accent2);
+            border: 1px solid rgba(255,101,132,0.2);
+        }
+
+        .btn-del:hover {
+            background: rgba(255,101,132,0.22);
+            transform: translateY(-1px);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card { animation: fadeUp 0.4s ease both; }
+        .stat-card:nth-child(1) { animation-delay: 0.05s; }
+        .stat-card:nth-child(2) { animation-delay: 0.10s; }
+        .stat-card:nth-child(3) { animation-delay: 0.15s; }
+        .stat-card:nth-child(4) { animation-delay: 0.20s; }
+        .table-wrap { animation: fadeUp 0.4s ease 0.25s both; }
+
+        /* EMPTY STATE */
+        .empty {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+        .empty-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo">Store<span>DB</span></div>
+    <div class="nav-label">Navigation</div>
+    <a href="/" class="nav-item active">
+        <span class="icon">📦</span> Commandes
+    </a>
+    <a href="/add" class="nav-item">
+        <span class="icon">➕</span> Ajouter
+    </a>
+    <div class="sidebar-bottom">
+        <div class="db-status">
+            <div class="dot"></div>
+            CouchDB connecté
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Tableau de <span>bord</span></h1>
+            <p class="page-sub">Gestion des commandes e-commerce en temps réel</p>
+        </div>
+        <a href="/add" class="btn-add">
+            <span>＋</span> Nouvelle commande
+        </a>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-icon">📦</div>
+            <div class="stat-label">Total commandes</div>
+            <div class="stat-value" id="total">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Livrées</div>
+            <div class="stat-value" id="delivered">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🚚</div>
+            <div class="stat-label">En transit</div>
+            <div class="stat-value" id="shipped">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Valeur totale</div>
+            <div class="stat-value" id="totalPrice">—</div>
+        </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+        <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Rechercher par ville, statut, order ID..." id="searchInput">
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+        <div class="table-head">
+            <span class="table-title">Commandes récentes</span>
+            <span class="table-count" id="rowCount">— entrées</span>
+        </div>
+        <table id="mainTable">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer ID</th>
+                    <th>Statut</th>
+                    <th>Ville</th>
+                    <th>État</th>
+                    <th>Prix</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                {% for doc in docs %}
+                <tr>
+                    <td><div class="order-id" title="{{ doc.get('order_id', '') }}">{{ doc.get('order_id', '') }}</div></td>
+                    <td><div class="customer-id" title="{{ doc.get('customer_id', '') }}">{{ doc.get('customer_id', '') }}</div></td>
+                    <td>
+                        {% set s = doc.get('order_status', '') %}
+                        <span class="badge badge-{{ s if s in ['delivered','shipped','processing','canceled'] else 'default' }}">
+                            {{ s }}
+                        </span>
+                    </td>
+                    <td>{{ doc.get('customer_city', '') }}</td>
+                    <td>{{ doc.get('customer_state', '') }}</td>
+                    <td><span class="price">{{ doc.get('price', '') }}</span></td>
+                    <td>
+                        <div class="actions">
+                            <a href="/edit/{{ doc['_id'] }}" class="btn-edit">✏️ Éditer</a>
+                            <a href="/delete/{{ doc['_id'] }}" class="btn-del" onclick="return confirm('Supprimer cette commande ?')">🗑️ Suppr.</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if not docs %}
+        <div class="empty">
+            <div class="empty-icon">📭</div>
+            <div class="empty-text">Aucune commande trouvée</div>
+            <p>Ajoutez votre première commande pour commencer</p>
+        </div>
+        {% endif %}
+    </div>
+</main>
+
+<script>
+    // STATS
+    const rows = document.querySelectorAll('#tableBody tr');
+    document.getElementById('total').textContent = rows.length;
+
+    let delivered = 0, shipped = 0, totalPrice = 0;
+    rows.forEach(row => {
+        const badge = row.querySelector('.badge');
+        const status = badge ? badge.textContent.trim() : '';
+        if (status === 'delivered') delivered++;
+        if (status === 'shipped') shipped++;
+        const priceEl = row.querySelector('.price');
+        if (priceEl) {
+            const val = parseFloat(priceEl.textContent.replace('R$ ', '').replace(',', '.'));
+            if (!isNaN(val)) totalPrice += val;
+        }
+    });
+
+    document.getElementById('delivered').textContent = delivered;
+    document.getElementById('shipped').textContent = shipped;
+    document.getElementById('totalPrice').textContent = 'R$' + totalPrice.toFixed(0);
+    document.getElementById('rowCount').textContent = rows.length + ' entrées';
+
+    // SEARCH
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        let visible = 0;
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            const show = text.includes(q);
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+        document.getElementById('rowCount').textContent = visible + ' entrées';
+    });
+</script>
+</body>
+</html>

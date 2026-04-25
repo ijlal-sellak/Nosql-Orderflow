@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter une commande</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --border: #2a2a3d;
+            --accent: #6c63ff;
+            --accent2: #ff6584;
+            --accent3: #43e97b;
+            --text: #e8e8f0;
+            --text-muted: #6b6b8a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: 240px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 20px;
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 48px;
+        }
+
+        .logo span { font-weight: 400; opacity: 0.6; }
+
+        .nav-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            padding-left: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(108,99,255,0.12);
+            color: var(--accent);
+        }
+
+        .nav-item .icon { font-size: 18px; width: 22px; text-align: center; }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .db-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 10px 12px;
+        }
+
+        .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent3);
+            box-shadow: 0 0 8px var(--accent3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            padding: 40px 48px;
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover { color: var(--accent); }
+        .breadcrumb span { color: var(--text); }
+
+        /* PAGE TITLE */
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 6px;
+        }
+
+        .page-title span {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        /* FORM CARD */
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 680px;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full { grid-column: 1 / -1; }
+
+        label {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input, select {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 16px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        input::placeholder { color: var(--text-muted); }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108,99,255,0.12);
+        }
+
+        select option { background: var(--surface2); }
+
+        /* DIVIDER */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 28px 0;
+        }
+
+        /* BUTTONS */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-submit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), #9b59b6);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(108,99,255,0.35);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(108,99,255,0.5);
+        }
+
+        .btn-cancel {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--accent2);
+            color: var(--accent2);
+        }
+
+        /* STATUS PREVIEW */
+        .status-preview {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            transition: background 0.2s;
+        }
+
+        .status-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo">Store<span>DB</span></div>
+    <div class="nav-label">Navigation</div>
+    <a href="/" class="nav-item">
+        <span class="icon">📦</span> Commandes
+    </a>
+    <a href="/add" class="nav-item active">
+        <span class="icon">➕</span> Ajouter
+    </a>
+    <div class="sidebar-bottom">
+        <div class="db-status">
+            <div class="dot"></div>
+            CouchDB connecté
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="breadcrumb">
+        <a href="/">Dashboard</a>
+        <span>›</span>
+        <span>Nouvelle commande</span>
+    </div>
+
+    <h1 class="page-title">Nouvelle <span>commande</span></h1>
+    <p class="page-sub">Remplissez les informations pour ajouter une commande à la base CouchDB</p>
+
+    <div class="form-card">
+        <form method="POST">
+            <div class="form-grid">
+
+                <div class="form-group full">
+                    <label>Order ID</label>
+                    <input type="text" name="order_id" placeholder="ex: ORD-2024-001" required>
+                </div>
+
+                <div class="form-group full">
+                    <label>Customer ID</label>
+                    <input type="text" name="customer_id" placeholder="ex: CUST-2024-001" required>
+                </div>
+
+                <div class="form-group full">
+                    <label>Statut de la commande</label>
+                    <select name="order_status" id="statusSelect">
+                        <option value="delivered">✅ Delivered</option>
+                        <option value="shipped">🚚 Shipped</option>
+                        <option value="processing">⏳ Processing</option>
+                        <option value="canceled">❌ Canceled</option>
+                    </select>
+                    <div class="status-preview">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span class="status-text" id="statusText">Sélectionnez un statut</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ville</label>
+                    <input type="text" name="customer_city" placeholder="ex: São Paulo" required>
+                </div>
+
+                <div class="form-group">
+                    <label>État (BR)</label>
+                    <input type="text" name="customer_state" placeholder="ex: SP" maxlength="2" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Prix (R$)</label>
+                    <input type="number" step="0.01" name="price" placeholder="ex: 129.99" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Product ID</label>
+                    <input type="text" name="product_id" placeholder="ex: PROD-001" required>
+                </div>
+
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="form-actions">
+                <a href="/" class="btn-cancel">← Annuler</a>
+                <button type="submit" class="btn-submit">✚ Ajouter la commande</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    const colors = {
+        delivered: '#43e97b',
+        shipped: '#38b2f5',
+        processing: '#f6d365',
+        canceled: '#ff6584'
+    };
+    const labels = {
+        delivered: 'Commande livrée',
+        shipped: 'En cours de livraison',
+        processing: 'En traitement',
+        canceled: 'Commande annulée'
+    };
+
+    const sel = document.getElementById('statusSelect');
+    const dot = document.getElementById('statusDot');
+    const txt = document.getElementById('statusText');
+
+    function updateStatus() {
+        const val = sel.value;
+        dot.style.background = colors[val] || '#6b6b8a';
+        dot.style.boxShadow = `0 0 6px ${colors[val] || '#6b6b8a'}`;
+        txt.textContent = labels[val] || '';
+        txt.style.color = colors[val] || '#6b6b8a';
+    }
+
+    sel.addEventListener('change', updateStatus);
+    updateStatus();
+</script>
+</body>
+</html>

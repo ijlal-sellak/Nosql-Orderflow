@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier une commande</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131a;
+            --surface2: #1c1c28;
+            --border: #2a2a3d;
+            --accent: #6c63ff;
+            --accent2: #ff6584;
+            --accent3: #43e97b;
+            --text: #e8e8f0;
+            --text-muted: #6b6b8a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: 240px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 20px;
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 48px;
+        }
+
+        .logo span { font-weight: 400; opacity: 0.6; }
+
+        .nav-label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            padding-left: 12px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(108,99,255,0.12);
+            color: var(--accent);
+        }
+
+        .nav-item .icon { font-size: 18px; width: 22px; text-align: center; }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .db-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 10px 12px;
+        }
+
+        .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent3);
+            box-shadow: 0 0 8px var(--accent3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            padding: 40px 48px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* BREADCRUMB */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .breadcrumb a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover { color: var(--accent); }
+        .breadcrumb span { color: var(--text); }
+
+        .page-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 6px;
+        }
+
+        .page-title span {
+            background: linear-gradient(135deg, #f6d365, var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        /* DOC INFO BANNER */
+        .doc-banner {
+            background: rgba(108,99,255,0.07);
+            border: 1px solid rgba(108,99,255,0.2);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            max-width: 680px;
+        }
+
+        .doc-banner-icon { font-size: 24px; }
+
+        .doc-banner-info { flex: 1; }
+
+        .doc-banner-label {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .doc-banner-id {
+            font-family: 'DM Sans', monospace;
+            font-size: 13px;
+            color: var(--accent);
+            word-break: break-all;
+        }
+
+        /* FORM CARD */
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 680px;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* READONLY FIELDS */
+        .readonly-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 28px;
+            padding: 20px;
+            background: var(--surface2);
+            border-radius: 14px;
+            border: 1px solid var(--border);
+        }
+
+        .readonly-field { display: flex; flex-direction: column; gap: 4px; }
+
+        .readonly-label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .readonly-value {
+            font-size: 13px;
+            color: var(--text);
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .readonly-section-title {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .readonly-section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* EDITABLE FIELDS */
+        .editable-title {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .editable-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(108,99,255,0.2);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group.full { grid-column: 1 / -1; }
+
+        label {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input, select {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 13px 16px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        input::placeholder { color: var(--text-muted); }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108,99,255,0.12);
+        }
+
+        select option { background: var(--surface2); }
+
+        .status-preview {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .status-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .status-text { font-size: 12px; transition: color 0.2s; }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 28px 0;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-save {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #f6d365, var(--accent2));
+            color: #1a0a00;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 4px 20px rgba(246,211,101,0.25);
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(246,211,101,0.4);
+        }
+
+        .btn-cancel {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--accent2);
+            color: var(--accent2);
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="logo">Store<span>DB</span></div>
+    <div class="nav-label">Navigation</div>
+    <a href="/" class="nav-item">
+        <span class="icon">📦</span> Commandes
+    </a>
+    <a href="/add" class="nav-item">
+        <span class="icon">➕</span> Ajouter
+    </a>
+    <div class="sidebar-bottom">
+        <div class="db-status">
+            <div class="dot"></div>
+            CouchDB connecté
+        </div>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="breadcrumb">
+        <a href="/">Dashboard</a>
+        <span>›</span>
+        <span>Modifier commande</span>
+    </div>
+
+    <h1 class="page-title">Modifier la <span>commande</span></h1>
+    <p class="page-sub">Seuls le statut, le prix et la ville sont modifiables</p>
+
+    <!-- DOC ID BANNER -->
+    <div class="doc-banner">
+        <div class="doc-banner-icon">🔑</div>
+        <div class="doc-banner-info">
+            <div class="doc-banner-label">Document ID (CouchDB)</div>
+            <div class="doc-banner-id">{{ doc['_id'] }}</div>
+        </div>
+    </div>
+
+    <div class="form-card">
+
+        <!-- READ-ONLY INFO -->
+        <div class="readonly-section-title">Informations non modifiables</div>
+        <div class="readonly-grid">
+            <div class="readonly-field">
+                <div class="readonly-label">Order ID</div>
+                <div class="readonly-value" title="{{ doc.get('order_id', '—') }}">{{ doc.get('order_id', '—') }}</div>
+            </div>
+            <div class="readonly-field">
+                <div class="readonly-label">Customer ID</div>
+                <div class="readonly-value" title="{{ doc.get('customer_id', '—') }}">{{ doc.get('customer_id', '—') }}</div>
+            </div>
+            <div class="readonly-field">
+                <div class="readonly-label">Product ID</div>
+                <div class="readonly-value">{{ doc.get('product_id', '—') }}</div>
+            </div>
+            <div class="readonly-field">
+                <div class="readonly-label">État</div>
+                <div class="readonly-value">{{ doc.get('customer_state', '—') }}</div>
+            </div>
+        </div>
+
+        <!-- EDITABLE FIELDS -->
+        <form method="POST">
+            <div class="editable-title">Champs modifiables</div>
+
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label>Statut</label>
+                    <select name="order_status" id="statusSelect">
+                        {% set current = doc.get('order_status', '') %}
+                        <option value="delivered"  {% if current == 'delivered'  %}selected{% endif %}>✅ Delivered</option>
+                        <option value="shipped"    {% if current == 'shipped'    %}selected{% endif %}>🚚 Shipped</option>
+                        <option value="processing" {% if current == 'processing' %}selected{% endif %}>⏳ Processing</option>
+                        <option value="canceled"   {% if current == 'canceled'   %}selected{% endif %}>❌ Canceled</option>
+                    </select>
+                    <div class="status-preview">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span class="status-text" id="statusText"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Prix (R$)</label>
+                    <input type="number" step="0.01" name="price"
+                           value="{{ doc.get('price', '') }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Ville</label>
+                    <input type="text" name="customer_city"
+                           value="{{ doc.get('customer_city', '') }}" required>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="form-actions">
+                <a href="/" class="btn-cancel">← Annuler</a>
+                <button type="submit" class="btn-save">💾 Sauvegarder</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+    const colors = {
+        delivered: '#43e97b',
+        shipped: '#38b2f5',
+        processing: '#f6d365',
+        canceled: '#ff6584'
+    };
+    const labels = {
+        delivered: 'Commande livrée',
+        shipped: 'En cours de livraison',
+        processing: 'En traitement',
+        canceled: 'Commande annulée'
+    };
+
+    const sel = document.getElementById('statusSelect');
+    const dot = document.getElementById('statusDot');
+    const txt = document.getElementById('statusText');
+
+    function updateStatus() {
+        const val = sel.value;
+        dot.style.background = colors[val] || '#6b6b8a';
+        dot.style.boxShadow = `0 0 6px ${colors[val] || '#6b6b8a'}`;
+        txt.textContent = labels[val] || '';
+        txt.style.color = colors[val] || '#6b6b8a';
+    }
+
+    sel.addEventListener('change', updateStatus);
+    updateStatus();
+</script>
+</body>
+</html>
