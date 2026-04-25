@@ -9,6 +9,7 @@
 
 ---
 
+
 ##  Preview
 
 | Dashboard | Add Order | Edit Order |
@@ -16,6 +17,9 @@
 | View all orders with live stats | Create new orders via form | Edit status, price and city |
 
 ---
+<img width="1345" height="580" alt="Capture d&#39;écran 2026-04-25 123702" src="https://github.com/user-attachments/assets/8ffc6c97-4558-4758-85bc-173f082af0b7" />
+<img width="1340" height="562" alt="Capture d&#39;écran 2026-04-25 123804" src="https://github.com/user-attachments/assets/d28b12ab-5675-4dd9-b095-916d5d84ab7c" />
+
 
 ##  Features
 
