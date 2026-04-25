@@ -9,7 +9,7 @@
 
 ---
 
-## 📸 Preview
+##  Preview
 
 | Dashboard | Add Order | Edit Order |
 |-----------|-----------|------------|
@@ -17,19 +17,19 @@
 
 ---
 
-## ✨ Features
+##  Features
 
-- 📦 **Full CRUD** — Create, Read, Update, Delete orders
-- 🗄️ **CouchDB** — NoSQL Document database, different from MongoDB
-- 🐳 **Docker** — One-command CouchDB deployment
-- 🔍 **Live Search** — Filter orders instantly in the dashboard
-- 📊 **Stats Cards** — Real-time totals: orders, delivered, shipped, revenue
-- 🎨 **Modern UI** — Dark mode dashboard with sidebar navigation
+-  **Full CRUD** — Create, Read, Update, Delete orders
+-  **CouchDB** — NoSQL Document database, different from MongoDB
+-  **Docker** — One-command CouchDB deployment
+-  **Live Search** — Filter orders instantly in the dashboard
+-  **Stats Cards** — Real-time totals: orders, delivered, shipped, revenue
+-  **Modern UI** — Dark mode dashboard with sidebar navigation
 - 🇧🇷 **Real Dataset** — 500 orders from the Brazilian E-Commerce (Olist) dataset
 
 ---
 
-## 🗂️ Project Structure
+##  Project Structure
 
 ```
 ecommerce-nosql/
@@ -38,7 +38,7 @@ ecommerce-nosql/
 ├── create_db.py            # Script to create the CouchDB database
 ├── import_data.py          # Script to import CSV dataset into CouchDB
 ├── requirements.txt        # Python dependencies
-├── .gitignore              # Files to exclude from Git
+├── .gitignore              
 │
 ├── templates/
 │   ├── index.html          # Dashboard — Read all orders
@@ -54,7 +54,7 @@ ecommerce-nosql/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -64,11 +64,11 @@ ecommerce-nosql/
 
 ---
 
-### 1️⃣ Clone the repository
+### Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ecommerce-nosql.git
-cd ecommerce-nosql
+git clone https://github.com/YOUR_USERNAME/Nosql-Orderflow.git
+cd Nosql-Orderflow
 ```
 
 ### 2️⃣ Start CouchDB with Docker
