@@ -6,8 +6,8 @@ services:
     container_name: couchdb
     restart: unless-stopped
     environment:
-      COUCHDB_USER: admin
-      COUCHDB_PASSWORD: admin123
+      COUCHDB_USER: ${COUCHDB_USER}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
     ports:
       - "5984:5984"
     volumes:
