@@ -6,4 +6,3 @@ Place the following CSV files from the [Olist Brazilian E-Commerce Dataset](http
 - `olist_customers_dataset.csv`
 - `olist_order_items_dataset.csv`
 
-> These files are excluded from Git via `.gitignore` due to their size.
